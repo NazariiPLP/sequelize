@@ -54,18 +54,35 @@ module.exports.deleteByPk = async(req, res, next) => {
     }
 }
 
+// module.exports.updateUser = async(req, res, next) => {
+//     try {
+//         const { params: { id }, body } = req;
+
+//         const updatedUsersArray  = await User.update(body, {
+//             where: {
+//                 id
+//             },
+//             returning: true
+//         });
+
+//         return res.status(200).send(updatedUsersArray);
+//     } catch (error) {
+//         next(error);
+//     }
+// }
+
 module.exports.updateUser = async(req, res, next) => {
     try {
         const { params: { id }, body } = req;
 
-        const updatedUsersArray  = await User.update(body, {
-            where: {
-                id
-            },
-            returning: true
-        });
+        // 1. Знаходимо того конкретного юзера, дії над яким потрібно вчинити
+        const foundUser = await User.findByPk(id);
 
-        return res.status(200).send(updatedUsersArray);
+        // 2. Вчинити над знайденим в п. 1 юзером ті дії, які потрібно 
+        const result = await foundUser.update(body);
+
+        // 3. Закриваємо з'єднання з клієнтом і повертаємо рузультат
+        return res.status(200).send(result);
     } catch (error) {
         next(error);
     }
