@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     lastName: {
-      fiels: 'last_name',
+      field: 'last_name',
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
@@ -51,11 +51,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         isDate: true,
         // дата народження не була пізніше, ніж сьогоднішня дата
-        isValidDate(value) {
-          if(isAfter(new Date(value), new Date())) { // дата, яку ми заносимо в таблицю ПІСЛЯ поточної
-            throw new Error('Your birthday mist be earlier than today');
-          }
-        }
+        isBefore: new Date().toDateString()
       }
     },
     gender: {
@@ -67,5 +63,5 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'users',
     underscored: true // created_at, updated_at
   });
-  return User; // snake_case camelCase
+  return User;
 };
