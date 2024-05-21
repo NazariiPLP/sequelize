@@ -2,12 +2,8 @@ const { Task, User } = require('../models');
 
 module.exports.createTask = async(req, res, next) => {
     try {
-        const { body, params: { userid } } = req;
-
-        // 1. Потрібно знайти того самого юзера, якому потрібно додати таски
-        const user = await User.findByPk(userId);
-
-        // 2. Потрібно додати знайдемо юзеру таски
+        const { body, userInstance } = req;
+        
         // parent.createChild(body);
         const result = await user.createTask(body);
 

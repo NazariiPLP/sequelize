@@ -1,3 +1,4 @@
+const { getUserInstance } = require('../middlewares/user.mv');
 const { User } = require('../models');
 
 module.exports.createUser = async(req, res, next) => {
@@ -25,10 +26,8 @@ module.exports.findAll = async(req, res, next) => {
 module.exports.findByPk = async(req, res, next) => {
     try {
         const { params: { id } } = req;
-
-        const foundUser = await User.findByPk(id);
-
-        return res.status(200).send(foundUser);
+        
+        return res.status(200).send(getUserInstance);
     } catch (error) {
         next(error);
     }
@@ -47,6 +46,7 @@ module.exports.deleteByPk = async(req, res, next) => {
         if(rowsCount) {
             return res.status(200).send('Successfull delete');
         } else {
+            getUserInstance   
             return res.status(204).end();
         }
     } catch (error) {
@@ -73,17 +73,14 @@ module.exports.deleteByPk = async(req, res, next) => {
 
 module.exports.updateUser = async(req, res, next) => {
     try {
-        const { params: { id }, body } = req;
+        const { body } = req;
 
-        // 1. Знаходимо того конкретного юзера, дії над яким потрібно вчинити
-        const foundUser = await User.findByPk(id);
-
-        // 2. Вчинити над знайденим в п. 1 юзером ті дії, які потрібно 
+        const { getUserInstance } = req;
+        
         const result = await foundUser.update(body);
-
-        // 3. Закриваємо з'єднання з клієнтом і повертаємо рузультат
+       
         return res.status(200).send(result);
     } catch (error) {
         next(error);
-    };
+    }
 }
