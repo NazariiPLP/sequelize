@@ -10,7 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Task.belongsTo(models.User, {
+        foreignKey: 'userId'
+      });
     }
   }
   Task.init({
@@ -40,3 +42,11 @@ module.exports = (sequelize, DataTypes) => {
   });
   return Task;
 };
+
+
+/* Як створити зв'язок між моделями?
+
+1. На рівні таблиць (міграції) мати стовпці з зовнішнім ключем (foreign key)
+2. Прописати асоціації,
+
+*/

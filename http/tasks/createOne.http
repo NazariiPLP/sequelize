@@ -1,0 +1,7 @@
+POST http://localhost:5000/api/task/2 HTTP/1.1
+Content-Type: application/json
+
+{
+    "body": "My first task",
+    "isDone": "false"
+}
