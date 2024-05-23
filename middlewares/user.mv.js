@@ -1,5 +1,6 @@
 const { User } = require('../models/');
 const yup = require('yup');
+const UserError = require('../errors/UserError');
 
 module.exports.getUserInstance = async(req, res, next) => {
     try {
@@ -7,7 +8,7 @@ module.exports.getUserInstance = async(req, res, next) => {
         const user = await User.findByPk(userId);
 
         if(!user) { // Не юзер, якщо юзера не знайдено
-            throw new Error()
+            throw new UserError('User not found!');
         }
 
         req.getUserInstance = user;

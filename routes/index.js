@@ -2,6 +2,7 @@ const { Router } = require('express');
 const UserController = require('../controllers/User.controller');
 const TaskController = require('../controllers/Task.controller');
 const { getUserInstance, validateUser } = require('../middlewares/user.mv');
+const { validateTask } = require('../middlewares/task.mv');
 
 const router = Router();
 
@@ -18,7 +19,7 @@ router.put('/user/:userId', getUserInstance, UserController.updateUser);
 
 
 // POST http://localhost:5000/api/task/25
-router.post('/task/:userId', getUserInstance, TaskController.createTask);
+router.post('/task/:userId', validateTask, getUserInstance, TaskController.createTask);
 // GET http://localhost:5000/api/tasks/25
 router.get('/tasks/:userId', getUserInstance, TaskController.getAllUserTasks);
 // GET http://localhost:5000/api/tasks-count/25
