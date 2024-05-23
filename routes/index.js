@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const UserController = require('../controllers/User.controller');
 const TaskController = require('../controllers/Task.controller');
+const GroupController = require('../controllers/Group.controller');
 const { getUserInstance, validateUser } = require('../middlewares/user.mv');
 const { validateTask } = require('../middlewares/task.mv');
 
@@ -24,5 +25,11 @@ router.post('/task/:userId', validateTask, getUserInstance, TaskController.creat
 router.get('/tasks/:userId', getUserInstance, TaskController.getAllUserTasks);
 // GET http://localhost:5000/api/tasks-count/25
 router.get('/tasks-count/:userId', getUserInstance, TaskController.getCountOfTasks);
+
+
+// POST http://localhost:5000/api/groups
+router.post('/groups', GroupController.createGroup);
+// PUT http://localhost:5000/api/groups/:userId/:groupId
+router.put('groups/:userId/:groupId', getUserInstance, GroupController.addUserToGroup);
 
 module.exports = router;
