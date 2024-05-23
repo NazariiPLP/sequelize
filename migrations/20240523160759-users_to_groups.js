@@ -35,6 +35,16 @@ module.exports = {
         },
         onDelete: 'cascade',
         onUpdate: 'cascade'
+      },
+      createdAt: {
+        field: 'created_at',
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        field: 'updated_at',
+        allowNull: false,
+        type: Sequelize.DATE
       }
     });
   },
@@ -43,3 +53,14 @@ module.exports = {
     await queryInterface.dropTable('users_to_groups');
   }
 };
+
+
+/*
+
+groups ----
+            groups_to_users
+users -----
+
+m:n
+
+*/
