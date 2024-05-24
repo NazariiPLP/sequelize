@@ -1,0 +1,1 @@
+DELETE  hhtp://localhost:5000/api/users/groups/1 HTTP/1.1
