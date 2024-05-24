@@ -5,13 +5,17 @@ const UserError = require('../errors/UserError');
 module.exports.getUserInstance = async(req, res, next) => {
     try {
         const { params: { userId } } = req;
-        const user = await User.findByPk(userId);
+        const user = await User.findByPk(userId, {
+            attributes: {
+                exclude: ['password']
+            }
+        });
 
         if(!user) { // Не юзер, якщо юзера не знайдено
             throw new UserError('User not found!');
         }
 
-        req.getUserInstance = user;
+        req.UserInstance = user;
 
         next();
     } catch (error){
