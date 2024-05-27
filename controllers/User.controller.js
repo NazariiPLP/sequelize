@@ -15,7 +15,11 @@ module.exports.createUser = async(req, res, next) => {
 
 module.exports.findAll = async(req, res, next) => {
     try {
-        const resultsArray = await User.findAll();
+        const { pagination } = req;
+        
+        const resultsArray = await User.findAll({
+            ...pagination
+        });
 
         return res.status(200).send(resultsArray);
     } catch (error) {
@@ -25,9 +29,9 @@ module.exports.findAll = async(req, res, next) => {
 
 module.exports.findByPk = async(req, res, next) => {
     try {
-        const { params: { id } } = req;
-        
-        return res.status(200).send(getUserInstance);
+        const { userInstance } = req;
+
+        return res.status(200).send(userInstance);
     } catch (error) {
         next(error);
     }
@@ -35,18 +39,17 @@ module.exports.findByPk = async(req, res, next) => {
 
 module.exports.deleteByPk = async(req, res, next) => {
     try {
-        const { params: { id } } = req;
+        const { params: { userId } } = req;
 
         const rowsCount = await User.destroy({
             where: {
-                id
+                id: userId
             }
         });
 
         if(rowsCount) {
             return res.status(200).send('Successfull delete');
         } else {
-            getUserInstance   
             return res.status(204).end();
         }
     } catch (error) {
@@ -75,10 +78,10 @@ module.exports.updateUser = async(req, res, next) => {
     try {
         const { body } = req;
 
-        const { getUserInstance } = req;
+        const { userInstance } = req;
         
-        const result = await foundUser.update(body);
-       
+        const result = await userInstance.update(body);
+        
         return res.status(200).send(result);
     } catch (error) {
         next(error);
@@ -86,21 +89,21 @@ module.exports.updateUser = async(req, res, next) => {
 }
 
 // У відповіді отримати інформацію про сутність юзера + інформацію про всі групи,
-// в яких цей юзер перебуває 
+// в яких цей юзер перебуває
 
-  // Це приклад Lazy Loading 
-  /*
+// Це приклад Lazy Loading
+/*
 module.exports.getUserWithGroups = async (req, res, next) => {
     try {
         // 1. Спочатку ми витягаємо з бази юзера, сутність якого хочемо отримати
         const { params: { userId } } = req;
-        const user = await User.findByPk(userId);
+        const userInstance = await User.findByPk(userId);
         if(!userInstance) {
             throw new UserError('User not found');
         }
 
         // 2. Витягаємо всі групи юзера (магічний метод)
-        // parant.getChildren()
+        // parent.getChidlren()
         const groupsArray = await userInstance.getGroups();
 
         // 3. Ми отримали і юзера і групи у п.1, п.2
@@ -109,16 +112,20 @@ module.exports.getUserWithGroups = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-} */
+}
+*/
 
 // Голодне (моментальне) завантаження
 module.exports.getUserWithGroups = async (req, res, next) => {
     try {
         const { params: { userId } } = req;
 
-        // Отримуємо і юзера і його групи за один запит
-        const userWithGroups= await User.findByPk(userId, {
-            attributes: ['id', 'first_name', 'last_name'],
+        // Отримуємо і юзера і його групи за ОДИН запит
+        // const userWithGroups = await User.findByPk(userId, {
+        //     include: [Group] // LEFT JOIN
+        // });
+        const userWithGroups = await User.findByPk(userId, {
+            attributes: ['id', 'first_name', 'last_name'], // працює на таблицю users
             include: { // INNER JOIN
                 model: Group,
                 required: true,
@@ -134,10 +141,10 @@ module.exports.getUserWithGroups = async (req, res, next) => {
         }
 
         // Перед відправкою на сервер - видаляємо пароль з результату запиту
-        // Перетворити userWithGroups як об'єкт  JSON
-        const userWithGroupsJSON = userWithGroups.toJSON();
-        //Видаляємо поле password з JSON
-        delete userWithGroups.password;
+        // Перетворити userWithGroups як об'єкт JSON
+        // const userWithGroupsJSON = userWithGroups.toJSON();
+        // Видаляємо поле password з JSON
+        // delete userWithGroupsJSON.password;
 
         return res.status(200).send(userWithGroups);
     } catch (error) {

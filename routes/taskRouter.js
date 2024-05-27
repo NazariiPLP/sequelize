@@ -1,16 +1,22 @@
 const { Router } = require('express');
-const { validateTask } = require('../middlewares/task.mv');
-const { getUserInstance } = require('../middlewares/user.mv');
-const TaskController = require('../controllers/Task.controller');
+const UserController = require('../controllers/User.controller');
+const { getUserInstance, validateUser } = require('../middlewares/user.mv');
+const pagination = require('../middlewares/pagination.mv');
 
-const taskRouter = Router();
+const userRouter = Router();
 
-// task routes section
-// POST http://localhost:5000/api/task/25
-taskRouter.post('/:userId', validateTask, getUserInstance, TaskController.createTask);
-// GET http://localhost:5000/api/tasks/25
-taskRouter.get('/:userId', getUserInstance, TaskController.getAllUserTasks);
-// GET http://localhost:5000/api/tasks/count/:userId
-taskRouter.get('/count/:userId', getUserInstance, TaskController.getCountOfTasks);
+// user routes section
+// POST http://localhost:5000/api/users
+userRouter.post('/', validateUser, UserController.createUser);
+// GET http://localhost:5000/api/users
+userRouter.get('/', pagination, UserController.findAll);
+// GET http://localhost:5000/api/users/25
+userRouter.get('/:userId', getUserInstance, UserController.findByPk);
+// GET http://localhost:5000/api/users/groups/25
+userRouter.get('/groups/:userId', UserController.getUserWithGroups);
+// DELETE http://localhost:5000/api/users/25
+userRouter.delete('/:userId', UserController.deleteByPk);
+// PUT http://localhost:5000/api/users/25
+userRouter.put('/:userId', getUserInstance, UserController.updateUser);
 
-module.exports = taskRouter;
+module.exports = userRouter;
